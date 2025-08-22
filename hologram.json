@@ -1,0 +1,13 @@
+{
+	"id" : "hologram",
+	"name" : "Hologram",
+	"author" : ["Bee Bonnets"],
+	"description" : "What is Hologram? Hologram is an uncommon scaling xMult joker that gains 0.25x Mult whenever a card is added to your deck, starting at 1.0. This property makes Hologram synergise particularly well with any source of playing card generation, notably jokers like Marble Joker, guaranteeing a single instance of scaling each round; spectral cards like Incantation that generate many playing cards; and the voucher Magic Trick.",
+	"prefix" : "hgram",
+	"main_file" : "main.lua",
+	"priority" : 0,
+	"badge_colour" : "b4457a",
+	"badge_text_colour" : "dbb52f",
+	"display_name" : "Hologram",
+	"version" : "0.1a",
+}
