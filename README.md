@@ -25,3 +25,9 @@ At the end of the round, held cards without the gold enhancement give $2 for eac
 
 **Salt Lamp** - *Uncommon* - 
 Retrigger all played cards if a joker has been sold this round
+
+**Freight Train** - *Uncommon* - 
+When blind selected, add an ace and numbered card of your most numerous suit to deck
+
+**Joker Zone** - *Rare* - 
+For every 5 common jokers sold, create a negative common joker

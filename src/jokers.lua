@@ -254,7 +254,7 @@ SMODS.Joker{
 		return { vars = {(card.ability.extra.active and localize("hgram_active")) or localize("hgram_inactive")} }
 	end,
 	calculate = function(self, card, context)
-		if hgram.selling_other_joker(context) and not card.ability.extra.active then
+		if context.selling_card and (not context.blueprint) and context.card ~= card and context.card.config.center.set == "Joker" and not card.ability.extra.active then
 			card.ability.extra.active = true
 			return { message = localize("k_active_ex"), colour = G.C.GREEN }
 		end
@@ -266,4 +266,82 @@ SMODS.Joker{
 		end
 	end
 }
+
+-- freight train
+SMODS.Joker{
+	key = "freighttrain",
+	atlas = "jokers",
+	pos = {x=3, y=1},
+	rarity = 2,
+	cost = 7,
+	blueprint_compat = true,
+	perishable_compat = true,
+	eternal_compat = true,
+	loc_vars = function(self, infoqueue, card)
+		local display_suit = hgram.favoured_suit()
+		return {vars = {(display_suit ~= "None" and localize(display_suit, "suits_plural")) or localize("hgram_no_suit_found"), colours = {G.C.SUITS[display_suit] or G.C.INACTIVE}}}
+	end,
+	calculate = function(self, card, context)
+		if context.setting_blind then
+			local freight_suit = hgram.favoured_suit()
+			local freight_cards = {
+				SMODS.add_card{ set = "Base", area = G.deck, suit = freight_suit, rank = "Ace" },
+				SMODS.add_card{ set = "Base", area = G.deck, suit = freight_suit, rank = pseudorandom_element(
+					{ "2", "3", "4", "5", "6", "7", "8", "9", "10" }, "hgram_freight"
+				)},
+			}
+			return {
+				message = localize("hgram_freight_ex"),
+				message_card = card,
+				colour = G.C.SUITS[freight_suit],
+				func = function()
+					SMODS.calculate_context({playing_cards_added=true, cards= freight_cards})
+				end
+			}
+		end
+	end
+}
+
+-- joker zone
+SMODS.Joker{
+	key = "zone",
+	atlas = "jokers",
+	pos = {x=4, y=1},
+	rarity = 3,
+	cost = 9,
+	blueprint_compat = false,
+	perishable_compat = false,
+	eternal_compat = true,
+	config = {extra = {sells_for_joker = 5}},
+	loc_vars = function(self, infoqueue, card)
+		infoqueue[#infoqueue + 1] = G.P_CENTERS.e_negative
+		return {vars = {card.ability.extra.sells_for_joker, (card.ability.extra.sells_left or card.ability.extra.sells_for_joker)}}
+	end,
+	calculate = function(self, card, context)
+		if context.selling_card and not context.blueprint and context.card ~= card and
+		context.card.config.center.set == "Joker" and context.card.config.center.rarity == 1 then
+			card.ability.extra.sells_left = (card.ability.extra.sells_left or card.ability.extra.sells_for_joker) - 1
+			if card.ability.extra.sells_left == 0 then
+				card.ability.extra.sells_left = nil
+				G.E_MANAGER:add_event(Event({
+					func = function()
+						SMODS.add_card{
+							set = "Joker", key_append = "hgram_jokerzone",
+							rarity = "Common", edition = { negative = true }
+						}
+						return true
+					end
+				}))
+				return {message = localize("k_plus_joker"), message_card = card, colour = G.C.BLUE}
+			else
+				return {
+					message = (card.ability.extra.sells_for_joker - card.ability.extra.sells_left) .. "/" .. card.ability.extra.sells_for_joker,
+					message_card = card, colour = G.C.FILTER
+				}
+			end
+		end
+	end
+}
+
+
 

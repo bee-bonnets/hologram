@@ -10,7 +10,23 @@ hgram.empty_joker_slots = function()
 	end
 end
 
-
+hgram.favoured_suit = function()
+	if G.deck and G.deck.cards then
+		local suit_amounts = {}
+		for _,v in ipairs(G.playing_cards) do
+			suit_amounts[v.base.suit] = (suit_amounts[v.base.suit] or 0) + 1
+		end
+		local highest = 0
+		for _,v in pairs(suit_amounts) do
+			if v > highest then highest = v end
+		end
+		for k,v in pairs(suit_amounts) do
+			if v == highest then return k end
+		end
+	else
+		return "None"
+	end
+end
 
 -- food destruction effect taken from https://github.com/nh6574/VanillaRemade
 hgram.destroy_food = function(food)
